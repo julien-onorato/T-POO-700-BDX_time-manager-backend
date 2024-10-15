@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"  # Port du backend
+    environment:
+      - PGUSER=postgres
+      - PGPASSWORD=root
+      - PGDATABASE=time_manager_dev
+      - PGPORT=5432
+      - PGHOST=db
+      - DATABASE_URL=ecto://postgres:root@db:5432/time_manager_dev
+
+    depends_on:
+      - db
+
+  db:
+    build:
+      context: ./db_docker  # Chemin vers le Dockerfile de la base de données
+      dockerfile: Dockerfile
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: time_manager_dev  # Nom de la base de données
+    ports:
+      - "54321:5432"  # Port de la base de données exposé sur l'hôte
+
+  frontend:
+    build:
+      context: ../time_manager_front  # Chemin vers le dossier du frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    depends_on:
+      - web
