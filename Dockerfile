@@ -30,4 +30,4 @@ RUN mix compile
 EXPOSE 4000
  
 # Lancer l'application Elixir
-CMD ["mix", "phx.server"]
+ENTRYPOINT ["sh", "-c", "mix ecto.migrate && mix phx.server"]
