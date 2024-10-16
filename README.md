@@ -7,6 +7,7 @@ Elixir: Version 1.12+ is required. Install it here.
 PostgreSQL: The database used for this project is PostgreSQL. Ensure you have it installed and configured locally.
 
 
+
 ## To start your Phoenix server:
 
   * Run `mix setup` to install and setup dependencies
