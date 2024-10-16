@@ -57,9 +57,23 @@ jobs:
          docker pull andydck/db:latest
          docker pull andydck/backend:latest
          
-         # Run the container with the necessary configurations
-         docker run -d --name db_container -p 5432:5432 andydck/db:latest
-         docker run -d --name backend_container -p 4000:4000 andydck/backend:latest
+         # Exécuter le conteneur de la base de données
+         docker run -d --name db_container \
+           -e POSTGRES_USER="postgres" \
+           -e POSTGRES_PASSWORD="root" \
+           -e POSTGRES_DB="time_manager_dev" \
+           -p 54321:5432 andydck/db:latest
+         
+         # Exécuter le conteneur du backend
+         docker run -d --name backend_container \
+           -e PGUSER="postgres" \
+           -e PGPASSWORD="root" \
+           -e PGDATABASE="time_manager_dev" \
+           -e PGHOST="db" \
+           -e PGPORT="5432" \
+           -e DATABASE_URL="ecto://postgres:root@db:5432/time_manager_dev" \
+           -p 4000:4000 andydck/backend:latest
+
          
          # Optional: Wait for the container to start and check the status
          sleep 10  # Give some time for the service to start
