@@ -45,7 +45,7 @@ jobs:
       - name: Déployer sur le VPS
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          VPS_USER: ${{ secrets.VPS_USERNAME }}
+          VPS_USERNAME: ${{ secrets.VPS_USERNAME }}
           VPS_HOST: ${{ secrets.VPS_HOST }}
         run: |
           echo "${SSH_PRIVATE_KEY}" > key.pem
