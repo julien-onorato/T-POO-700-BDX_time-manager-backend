@@ -1,4 +1,4 @@
-Dotenv.load!(".env")
+# Dotenv.load!(".env")
 import Config
 
 # config/runtime.exs is executed for all environments, including
