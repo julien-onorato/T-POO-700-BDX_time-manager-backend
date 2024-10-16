@@ -52,22 +52,14 @@ jobs:
          chmod 600 key.pem
          # SSH into the VPS to execute Docker commands
          ssh -o StrictHostKeyChecking=no -i key.pem ${VPS_USERNAME}@${VPS_HOST} << 'EOF'
-         # Pull the latest Docker image
-         docker pull andydck/backend:latest
-         docker pull andydck/db:latest
          
-         # Stop and remove existing containers if they exist
-         if [ "$(docker ps --filter "publish=4000" -q)" ]; then
-          docker stop $(docker ps --filter "publish=4000" -q) && docker rm $(docker ps -a --filter "publish=4000" -q)
-         fi
-
-         if [ "$(docker ps --filter "publish=5432" -q)" ]; then
-          docker stop $(docker ps --filter "publish=5432" -q) && docker rm $(docker ps -a --filter "publish=5432" -q)
-         fi
+         # Pull the latest Docker image
+         docker pull andydck/db:latest
+         docker pull andydck/backend:latest
          
          # Run the container with the necessary configurations
-         docker run -d -p 4000:4000 andydck/backend:latest
-         docker run -d -p 5432:5432 andydck/db:latest
+         docker run -d --name db_container -p 5432:5432 andydck/db:latest
+         docker run -d --name backend_container -p 4000:4000 andydck/backend:latest
          
          # Optional: Wait for the container to start and check the status
          sleep 10  # Give some time for the service to start
