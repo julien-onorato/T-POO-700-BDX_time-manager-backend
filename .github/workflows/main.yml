@@ -57,10 +57,13 @@ jobs:
          docker pull andydck/db:latest
          
          # Stop and remove existing containers if they exist
-         docker stop $(docker ps --filter "publish=4000" -q) && docker rm $(docker ps -a --filter "publish=4000" -q)
-         docker stop $(docker ps --filter "publish=5432" -q) && docker rm $(docker ps -a --filter "publish=5432" -q)
+         if [ "$(docker ps --filter "publish=4000" -q)" ]; then
+          docker stop $(docker ps --filter "publish=4000" -q) && docker rm $(docker ps -a --filter "publish=4000" -q)
+         fi
 
-
+         if [ "$(docker ps --filter "publish=5432" -q)" ]; then
+          docker stop $(docker ps --filter "publish=5432" -q) && docker rm $(docker ps -a --filter "publish=5432" -q)
+         fi
          
          # Run the container with the necessary configurations
          docker run -d -p 4000:4000 andydck/backend:latest
