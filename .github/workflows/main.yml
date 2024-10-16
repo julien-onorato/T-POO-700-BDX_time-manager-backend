@@ -56,6 +56,14 @@ jobs:
          # Pull the latest Docker image
          docker pull andydck/db:latest
          docker pull andydck/backend:latest
+
+         # Stop and remove existing containers if they exist
+         docker stop db_container || true
+         docker rm db_container || true
+
+         # Stop and remove existing containers if they exist
+         docker stop backend_container || true
+         docker rm backend_container || true
          
          # Exécuter le conteneur de la base de données
          docker run -d --name db_container \
