@@ -71,6 +71,9 @@ jobs:
            -e POSTGRES_PASSWORD="root" \
            -e POSTGRES_DB="time_manager_dev" \
            -p 54321:5432 andydck/db:latest
+
+          # Créer la base de données
+         docker exec -it backend_container mix ecto.create
          
          # Exécuter le conteneur du backend
          docker run -d --name backend_container \
