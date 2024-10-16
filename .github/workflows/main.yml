@@ -78,7 +78,7 @@ jobs:
            -e PGUSER="postgres" \
            -e PGPASSWORD="root" \
            -e PGDATABASE="time_manager_dev" \
-           -e PGHOST="db_container" \
+           -e PGHOST="db" \
            -e PGPORT="5432" \
            -p 4000:4000 andydck/backend:latest
 
