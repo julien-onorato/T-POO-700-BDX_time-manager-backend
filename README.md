@@ -1,6 +1,7 @@
 # TimeManager
 
-Welcome to the Time Manager API project. This API is built using the Phoenix framework and is designed to provide a platform-independent solution for exchanging and storing data related to users, clocks, and working times.
+Welcome to the Time Manager API project.
+This API is built using the Phoenix framework and is designed to provide a platform-independent solution for exchanging and storing data related to users, clocks, and working times.
 
 Elixir: Version 1.12+ is required. Install it here.
 PostgreSQL: The database used for this project is PostgreSQL. Ensure you have it installed and configured locally.
