@@ -70,7 +70,7 @@ jobs:
            -e POSTGRES_USER="postgres" \
            -e POSTGRES_PASSWORD="root" \
            -e POSTGRES_DB="time_manager_dev" \
-           -p 54321:5432 andydck/db:latest
+           -p 5432:5432 andydck/db:latest
 
          
          # Exécuter le conteneur du backend
@@ -78,7 +78,7 @@ jobs:
            -e PGUSER="postgres" \
            -e PGPASSWORD="root" \
            -e PGDATABASE="time_manager_dev" \
-           -e PGHOST="db" \
+           -e PGHOST="db_container" \
            -e PGPORT="5432" \
            -p 4000:4000 andydck/backend:latest
 
