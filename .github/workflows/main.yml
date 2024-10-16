@@ -10,6 +10,7 @@ on:
  
 jobs:
   build:
+    environment: CI
     runs-on: ubuntu-latest
  
     steps:
@@ -33,6 +34,7 @@ jobs:
         run: docker push andydck/backend:latest
  
   deploy:
+    environment: CI
     runs-on: ubuntu-latest
     needs: build  # Assurez-vous que le job de build soit terminé
  
