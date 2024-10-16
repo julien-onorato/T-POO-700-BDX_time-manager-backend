@@ -14,23 +14,23 @@ jobs:
     runs-on: ubuntu-latest
  
     steps:
-      - name: Vérifier le code
+      - name: Checkout code
         uses: actions/checkout@v2
  
-      - name: Configurer Docker
+      - name: Docker configuration
         run: |
           echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
  
-      - name: Construire db
+      - name: Build DB
         run: docker build -t andydck/db:latest .
 
-      - name: Construire serveur
+      - name: Build server
         run: docker build -t andydck/backend:latest .
  
-      - name: Pousser db
+      - name: Push db to Docker
         run: docker push andydck/db:latest
 
-      - name: Pousser serveur
+      - name: Push server to Docker
         run: docker push andydck/backend:latest
  
   deploy:
@@ -39,10 +39,10 @@ jobs:
     needs: build  # Assurez-vous que le job de build soit terminé
  
     steps:
-      - name: Vérifier le code
+      - name: Checkout code
         uses: actions/checkout@v2
  
-      - name: Déployer sur le VPS
+      - name: Deploy to VPS
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           VPS_USERNAME: ${{ secrets.VPS_USERNAME }}
