@@ -48,17 +48,28 @@ jobs:
           VPS_USERNAME: ${{ secrets.VPS_USERNAME }}
           VPS_HOST: ${{ secrets.VPS_HOST }}
         run: |
-          echo "${SSH_PRIVATE_KEY}" > key.pem
-          chmod 600 key.pem
-          ssh -o StrictHostKeyChecking=no -i key.pem ${VPS_USERNAME}@${VPS_HOST} << 'EOF'
-            cd new_repo/T-POO-700-BDX_time-manager-backend/
-            docker compose up --build -d  # Run Docker Compose in detached mode
-            sleep 10  # Give some time for services to start
-            docker compose ps  # Check container status
-            if docker compose ps | grep "Up"; then
-             echo "Services are up and running!"
-            else
-             echo "Services failed to start"
-             exit 1
-            fi
-          EOF
+         echo "${SSH_PRIVATE_KEY}" > key.pem
+         chmod 600 key.pem
+         # SSH into the VPS to execute Docker commands
+         ssh -o StrictHostKeyChecking=no -i key.pem ${VPS_USERNAME}@${VPS_HOST} << 'EOF'
+         # Pull the latest Docker image
+         docker pull andydck/backend:latest
+         docker pull andydck/db:latest
+         
+         # Stop and remove existing containers if they exist
+         # docker stop frontend_container || true
+         # docker rm frontend_container || true
+         
+         # Run the container with the necessary configurations
+         docker run -d -p 4000:4000 andydck/backend:latest
+         docker run -d -p 5432:5432 andydck/db:latest
+         
+         # Optional: Wait for the container to start and check the status
+         sleep 10  # Give some time for the service to start
+         if docker ps | grep "backend"; then
+          echo "Service is up and running!"
+         else
+          echo "Service failed to start"
+          exit 1
+         fi
+         EOF
