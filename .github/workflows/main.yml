@@ -71,7 +71,6 @@ jobs:
            -e PGDATABASE="time_manager_dev" \
            -e PGHOST="db" \
            -e PGPORT="5432" \
-           -e DATABASE_URL="ecto://postgres:root@db:5432/time_manager_dev" \
            -p 4000:4000 andydck/backend:latest
 
          
