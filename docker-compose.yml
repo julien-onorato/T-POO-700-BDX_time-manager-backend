@@ -1,6 +1,17 @@
 version: '3.8'
 
 services:
+  db:
+    build:
+      context: ./db_docker  # Chemin vers le Dockerfile de la base de données
+      dockerfile: Dockerfile
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: time_manager_dev  # Nom de la base de données
+    ports:
+      - "54321:5432"  # Port de la base de données exposé sur l'hôte
+      
   web:
     build:
       context: .
@@ -17,13 +28,4 @@ services:
     depends_on:
       - db
 
-  db:
-    build:
-      context: ./db_docker  # Chemin vers le Dockerfile de la base de données
-      dockerfile: Dockerfile
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: root
-      POSTGRES_DB: time_manager_dev  # Nom de la base de données
-    ports:
-      - "54321:5432"  # Port de la base de données exposé sur l'hôte
+  
