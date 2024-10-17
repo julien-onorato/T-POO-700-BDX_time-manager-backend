@@ -57,7 +57,8 @@ jobs:
             docker compose down
             
             # Mettre à jour les fichiers depuis la branche main
-            git pull origin main
+            git fetch origin
+            git reset --hard origin/main
           
             # Démarrer les services Docker avec les fichiers à jour
             docker compose up --build -d  # Build et démarrer les services en mode détaché
