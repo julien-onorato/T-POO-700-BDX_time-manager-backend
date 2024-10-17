@@ -13,7 +13,6 @@ services:
       - PGDATABASE=time_manager_dev
       - PGPORT=5432
       - PGHOST=db
-      - DATABASE_URL=ecto://postgres:root@db:5432/time_manager_dev
 
     depends_on:
       - db
