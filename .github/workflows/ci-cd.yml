@@ -1,0 +1,51 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Vérifier le code
+        uses: actions/checkout@v2
+
+      - name: Configurer Docker
+        run: |
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Construire l'image Docker
+        run: docker build -t votre_image_docker:latest .
+
+      - name: Pousser l'image Docker
+        run: docker push votre_image_docker:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build  # Assurez-vous que le job de build soit terminé
+
+    steps:
+      - name: Vérifier le code
+        uses: actions/checkout@v2
+
+      - name: Déployer sur le VPS
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+        run: |
+          echo "${SSH_PRIVATE_KEY}" > key.pem
+          chmod 600 key.pem
+          ssh -o StrictHostKeyChecking=no -i key.pem ${VPS_USER}@${VPS_HOST} << 'EOF'
+            docker pull votre_image_docker:latest
+            docker stop votre_container || true
+            docker rm votre_container || true
+            docker run -d --name votre_container -p 4000:4000 votre_image_docker:latest
+          EOF
+
