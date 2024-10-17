@@ -11,8 +11,8 @@ defmodule TimeManagerWeb.Router do
 
     options "/clocks/:userID", ClockController, :options
 
-    get "/users", UserController, :index
-    resources "/users", UserController, except: [:new, :edit, :index]
+    #get "/users", UserController, :index
+    #resources "/users", UserController, except: [:new, :edit, :index]
 
     # get "/workingtime/:userID", WorkingTimeController, :index
     get "/workingtime/", WorkingTimeController, :index
