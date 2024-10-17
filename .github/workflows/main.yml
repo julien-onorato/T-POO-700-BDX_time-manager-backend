@@ -1,24 +1,3 @@
-Skip to content
-Navigation Menu
-julien-onorato
-/
-T-POO-700-BDX_time-manager-backend
-
-Type / to search
-Code
-Issues
-Pull requests
-Actions
-Projects
-Wiki
-Security
-Insights
-CI/CD
-Update Dockerfile #15
-Jobs
-Run details
-Workflow file for this run
-.github/workflows/main.yml at 522342b
 name: CI/CD
  
 on:
