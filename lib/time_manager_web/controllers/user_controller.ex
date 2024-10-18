@@ -21,6 +21,41 @@ defmodule TimeManagerWeb.UserController do
     render(conn, "index.json", users: users)
   end
 
+  # GET /api/current_user
+  def current_user(conn, _params) do
+    claims = conn.assigns[:current_user]
+
+    # Assurez-vous que claims n'est pas nil avant de continuer
+    if claims do
+      user_id = claims["user_id"]
+
+      case Accounts.get_user!(user_id) do
+        user ->
+          render(conn, "show.json", user: user)
+
+        # Cela ne devrait jamais se produire si get_user! fonctionne correctement,
+        # mais vous pouvez gérer une exception ici si vous le souhaitez.
+        _ ->
+          conn
+          |> put_status(:not_found)
+          |> json(%{error: "User not found"})
+      end
+    else
+      conn
+      |> put_status(:unauthorized)
+      |> json(%{error: "Unauthorized"})
+    end
+  end
+
+  # DELETE /api/logout
+  def logout(conn, _params) do
+    # Supprimer le cookie `token`
+    conn
+    |> put_resp_cookie("token", "", max_age: 0)  # Définir max_age à 0 pour supprimer le cookie
+    |> json(%{message: "Successfully logged out"})
+  end
+
+
   # GET /api/users/:id
   def show(conn, %{"id" => id}) do
     user = Accounts.get_user!(id)

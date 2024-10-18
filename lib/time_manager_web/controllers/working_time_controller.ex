@@ -31,22 +31,22 @@ defmodule TimeManagerWeb.WorkingTimeController do
   # end
 
   # GET /api/workingtime/:userID
-  # def index(conn, %{"userID" => user_id}) do
-  #   case Integer.parse(user_id) do
-  #     {user_id, ""} ->
-  #       workingtimes = WorkingTimes.list_workingtime_by_id(user_id)
+   def index(conn, %{"userID" => user_id}) do
+     case Integer.parse(user_id) do
+       {user_id, ""} ->
+         workingtimes = WorkingTimes.list_workingtime_by_id(user_id)
 
-  #       json(conn, %{
-  #         message: "Working times successfully fetched",
-  #         workingtimes: workingtimes
-  #       })
+         json(conn, %{
+           message: "Working times successfully fetched",
+           workingtimes: workingtimes
+         })
 
-  #     :error ->
-  #       conn
-  #       |> put_status(:bad_request)
-  #       |> json(%{error: "Invalid userID format"})
-  #   end
-  # end
+       :error ->
+         conn
+         |> put_status(:bad_request)
+         |> json(%{error: "Invalid userID format"})
+     end
+   end
 
 
 

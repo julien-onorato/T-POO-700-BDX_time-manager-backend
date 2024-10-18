@@ -4,8 +4,9 @@ defmodule TimeManager.Accounts do
   """
 
   import Ecto.Query, warn: false
-  alias TimeManager.Repo
+  import Ecto.Changeset
 
+  alias TimeManager.Repo
   alias TimeManager.Accounts.User
   alias TimeManager.WorkingTimes.WorkingTime
 
@@ -18,11 +19,6 @@ defmodule TimeManager.Accounts do
   @doc """
   Returns the list of users.
 
-  ## Examples
-
-      iex> list_users()
-      [%User{}, ...]
-
   """
   def list_users do
     Repo.all(User)
@@ -33,45 +29,33 @@ defmodule TimeManager.Accounts do
 
   Raises `Ecto.NoResultsError` if the User does not exist.
 
-  ## Examples
-
-      iex> get_user!(123)
-      %User{}
-
-      iex> get_user!(456)
-      ** (Ecto.NoResultsError)
-
   """
   def get_user!(id), do: Repo.get!(User, id)
 
   @doc """
   Creates a user.
 
-  ## Examples
-
-      iex> create_user(%{field: value})
-      {:ok, %User{}}
-
-      iex> create_user(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
   """
   def create_user(attrs \\ %{}) do
     %User{}
     |> User.changeset(attrs)
+    |> put_pass_hash()
     |> Repo.insert()
   end
 
   @doc """
+  Hash password.
+
+  """
+  defp put_pass_hash(changeset) do
+    case get_change(changeset, :password) do
+      nil -> changeset
+      password -> put_change(changeset, :password_hash, Bcrypt.hash_pwd_salt(password))
+    end
+  end
+
+  @doc """
   Updates a user.
-
-  ## Examples
-
-      iex> update_user(user, %{field: new_value})
-      {:ok, %User{}}
-
-      iex> update_user(user, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
 
   """
   def update_user(%User{} = user, attrs) do
@@ -83,14 +67,6 @@ defmodule TimeManager.Accounts do
   @doc """
   Deletes a user.
 
-  ## Examples
-
-      iex> delete_user(user)
-      {:ok, %User{}}
-
-      iex> delete_user(user)
-      {:error, %Ecto.Changeset{}}
-
   """
   def delete_user(%User{} = user) do
     Repo.delete(user)
@@ -99,15 +75,11 @@ defmodule TimeManager.Accounts do
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking user changes.
 
-  ## Examples
-
-      iex> change_user(user)
-      %Ecto.Changeset{data: %User{}}
-
   """
   def change_user(%User{} = user, attrs \\ %{}) do
     User.changeset(user, attrs)
   end
+
   @doc """
   Gets a single userby email and username
 
@@ -117,5 +89,14 @@ defmodule TimeManager.Accounts do
     User
     |> where([u], u.email == ^email or u.username == ^username)
     |> Repo.all()
+  end
+
+  # Fonction pour récupérer un utilisateur par email
+  def get_user_by_email(email) do
+    Repo.get_by(User, email: email)
+    |> case do
+      nil -> {:error, :not_found}
+      user -> {:ok, user}
+    end
   end
 end
