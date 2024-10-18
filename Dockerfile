@@ -1,5 +1,5 @@
 # Utiliser une image de base pour Elixir
-FROM elixir:1.14.0 AS build
+FROM elixir:1.17.3 AS build
  
 # Installer les dépendances nécessaires
 RUN apt-get update && \
