@@ -21,7 +21,7 @@ defmodule TimeManagerWeb.Router do
 
   # Routes nécessitant l'authentification
   scope "/api", TimeManagerWeb do
-    pipe_through [:api]
+    pipe_through [:api, :auth]
 
 
     options "/clocks/:userID", ClockController, :options
