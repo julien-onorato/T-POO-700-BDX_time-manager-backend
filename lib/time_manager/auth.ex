@@ -6,7 +6,7 @@ defmodule TimeManager.Auth do
   alias Bcrypt
 
   # Chargement de la clé secrète
-  @secret System.get_env("JWT_SECRET_KEY")
+  @secret "b439ae876c89134b0f2d8fc1e8a62b8c5787abf6d61234cf5656789d81234567"
 
   def authenticate_user(email, password) do
     with {:ok, user} <- Accounts.get_user_by_email(email),
