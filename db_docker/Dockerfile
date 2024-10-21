@@ -7,4 +7,4 @@ ENV POSTGRES_PASSWORD=root
 ENV POSTGRES_DB=time_manager_dev
 
 # Copier le fichier de sauvegarde dans le conteneur
-COPY dump.sql /docker-entrypoint-initdb.d/
+COPY backup.sql /docker-entrypoint-initdb.d/
