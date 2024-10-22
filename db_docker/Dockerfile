@@ -8,3 +8,5 @@ ENV POSTGRES_DB=time_manager_dev
 
 # Copier le fichier de sauvegarde dans le conteneur
 COPY backup.sql /docker-entrypoint-initdb.d/
+
+VOLUME /var/lin/postgresql/data
