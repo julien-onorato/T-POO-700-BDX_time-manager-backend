@@ -30,6 +30,9 @@ defmodule TimeManagerWeb.Router do
     get "/users", UserController, :index
     resources "/users", UserController, except: [:new, :edit, :index]
 
+    put "/users/:id/promote", UserController, :promote
+    put "/users/:id/demote", UserController, :demote
+
     get "/workingtime/", WorkingTimeController, :index
 
     get "/workingtime/:userID/:id", WorkingTimeController, :show

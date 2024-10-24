@@ -2,7 +2,6 @@ defmodule TimeManagerWeb.AuthController do
   use TimeManagerWeb, :controller
 
   alias TimeManager.Accounts
-  alias TimeManager.Accounts.User
   alias TimeManager.Auth
 
   def register(conn, %{"email" => email, "password" => password, "username" => username}) do

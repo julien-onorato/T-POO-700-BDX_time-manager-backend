@@ -1,9 +1,17 @@
 defmodule TimeManagerWeb.UserController do
   use TimeManagerWeb, :controller
 
+  defp get_current_user(conn) do
+    conn.assigns[:current_user]
+  end
+
   alias TimeManager.Accounts
   alias TimeManager.Accounts.User
   alias TimeManager.Repo
+
+  plug TimeManagerWeb.Plugs.CheckRole, "Admin" when action in [:promote, :demote]
+  plug TimeManagerWeb.Plugs.CheckRole, "Super Manager" when action in [:manage_managers]
+  plug TimeManagerWeb.Plugs.CheckRole, "Manager" when action in [:manage_employees]
 
   # GET /api/users (optionnellement filtrer par username et email)
   def index(conn, %{"username" => username, "email" => email}) do
@@ -151,6 +159,76 @@ defmodule TimeManagerWeb.UserController do
               errors: errors
             })
         end
+    end
+  end
+
+  # def promote(conn, %{"id" => id, "role" => role}) do
+  #   valid_roles = ["Admin", "Manager", "User"] # Liste des rôles valides
+
+  #   if role in valid_roles do
+  #     with user <- Accounts.get_user!(id) do
+  #       changeset = user
+  #       |> Ecto.Changeset.change()
+  #       |> Ecto.Changeset.put_change(:role, role)
+
+  #       case Repo.update(changeset) do
+  #         {:ok, _updated_user} ->
+  #           conn
+  #           |> put_status(:ok)
+  #           |> json(%{message: "User promoted successfully"})
+
+  #         {:error, changeset} ->
+  #           conn
+  #           |> put_status(:unprocessable_entity)
+  #           |> json(%{errors: changeset.errors})
+  #       end
+  #     else
+  #       _ ->
+  #         conn
+  #         |> put_status(:not_found)
+  #         |> json(%{error: "User not found"})
+  #     end
+  #   else
+  #     conn
+  #     |> put_status(:bad_request)
+  #     |> json(%{error: "Invalid role"})
+  #   end
+  # end
+
+  def promote(conn, %{"id" => id, "role" => role}) do
+    current_user = get_current_user(conn)
+
+    # Vérifiez que l'utilisateur a les permissions pour promouvoir
+    if current_user.role == "Admin" do
+      if role == "Admin" and Accounts.admin_exists?() do
+        conn
+        |> put_status(:bad_request)
+        |> json(%{error: "There is already an admin. Only one admin is allowed."})
+      else
+        # Logique de promotion
+      end
+    else
+      conn
+      |> put_status(:forbidden)
+      |> json(%{error: "You do not have permission to promote users."})
+    end
+  end
+
+
+
+  def demote(conn, %{"id" => id}) do
+    promoter = conn.assigns.current_user
+    target = Accounts.get_user!(id)
+
+    case Accounts.demote_user(promoter, target) do
+      {:ok, _user} ->
+        conn
+        |> put_status(:ok)
+        |> json(%{message: "User demoted successfully"})
+      {:error, reason} ->
+        conn
+        |> put_status(:forbidden)
+        |> json(%{error: reason})
     end
   end
 end

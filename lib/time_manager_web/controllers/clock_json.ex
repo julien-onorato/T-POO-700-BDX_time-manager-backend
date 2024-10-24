@@ -8,7 +8,7 @@ defmodule TimeManagerWeb.ClockJSON do
     Enum.map(clocks, fn clock ->
       %{
         id: clock.id,
-        clock_in: clock.clock_in,
+        clock_in: clock.time,
         clock_out: clock.clock_out,
         user_id: clock.user_id
       }
