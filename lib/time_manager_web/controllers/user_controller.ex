@@ -29,31 +29,33 @@ defmodule TimeManagerWeb.UserController do
     render(conn, "index.json", users: users)
   end
 
-  # GET /api/current_user
-  def current_user(conn, _params) do
-    claims = conn.assigns[:current_user]
+# GET /api/current_user
+def current_user(conn, _params) do
+  claims = conn.assigns[:current_user]
 
-    # Assurez-vous que claims n'est pas nil avant de continuer
-    if claims do
-      user_id = claims["user_id"]
+  # Assurez-vous que claims n'est pas nil avant de continuer
+  if claims do
+    user_id = claims["user_id"]
+    role = claims["role"] # Récupère le rôle de l'utilisateur
 
-      case Accounts.get_user!(user_id) do
-        user ->
-          render(conn, "show.json", user: user)
+    case Accounts.get_user!(user_id) do
+      user ->
+        # Incluez le rôle dans la réponse JSON
+        render(conn, "show.json", user: user, role: role)
 
-        # Cela ne devrait jamais se produire si get_user! fonctionne correctement,
-        # mais vous pouvez gérer une exception ici si vous le souhaitez.
-        _ ->
-          conn
-          |> put_status(:not_found)
-          |> json(%{error: "User not found"})
-      end
-    else
-      conn
-      |> put_status(:unauthorized)
-      |> json(%{error: "Unauthorized"})
+      # Cela ne devrait jamais se produire si get_user! fonctionne correctement,
+      # mais vous pouvez gérer une exception ici si vous le souhaitez.
+      _ ->
+        conn
+        |> put_status(:not_found)
+        |> json(%{error: "User not found"})
     end
+  else
+    conn
+    |> put_status(:unauthorized)
+    |> json(%{error: "Unauthorized"})
   end
+end
 
   # DELETE /api/logout
   def logout(conn, _params) do
