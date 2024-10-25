@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: root
+      POSTGRES_PASSWORD: 5yDT[p9-n5W_5s
       POSTGRES_DB: time_manager_dev  # Nom de la base de données
     ports:
       - "5432:5432"  # Port de la base de données exposé sur l'hôte
@@ -20,7 +20,7 @@ services:
       - "4000:4000"  # Port du backend
     environment:
       - PGUSER=postgres
-      - PGPASSWORD=root
+      - PGPASSWORD=5yDT[p9-n5W_5s
       - PGDATABASE=time_manager_dev
       - PGPORT=5432
       - PGHOST=db

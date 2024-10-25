@@ -1,5 +1,5 @@
 {application,time_manager,
-    [{config_mtime,1729669668},
+    [{config_mtime,1729844720},
      {compile_env,[{time_manager,['Elixir.TimeManagerWeb.Gettext'],error}]},
      {optional_applications,[]},
      {applications,
