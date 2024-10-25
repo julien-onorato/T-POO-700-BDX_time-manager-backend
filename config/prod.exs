@@ -19,7 +19,8 @@ config :logger, level: :info
 
 config :time_manager, TimeManagerWeb.Endpoint,
   http: [ip: {0, 0, 0, 0}, port: 4000],
-  url: [host: "134.209.208.89", port: 4000],
+  # url: [host: "134.209.208.89", port: 4000],
+  url: [host: "localhost"],
   server: true
 # Runtime production configuration, including reading
 # of environment variables, is done on config/runtime.exs.

@@ -9,6 +9,8 @@ defmodule TimeManager.Accounts do
   alias TimeManager.Repo
   alias TimeManager.Accounts.User
   alias TimeManager.WorkingTimes.WorkingTime
+  alias TimeManager.Accounts.Roles
+
 
 
   def list_all_workingtimes do
@@ -98,5 +100,59 @@ defmodule TimeManager.Accounts do
       nil -> {:error, :not_found}
       user -> {:ok, user}
     end
+  end
+
+
+  def promote_user(promoter, target) do
+    promoter_role = promoter.role
+    target_role = target.role
+
+    # Vérifier si le promoteur peut promouvoir le rôle cible
+    if Roles.can_promote?(promoter_role, target_role) do
+      # Logique pour promouvoir l'utilisateur (modification du rôle, etc.)
+      {:ok, promote(target)}
+    else
+      {:error, "You do not have permission to promote this user"}
+    end
+  end
+
+  def demote_user(promoter, target) do
+    promoter_role = promoter.role
+    target_role = target.role
+
+    # Vérifier si le promoteur peut rétrograder le rôle cible
+    if Roles.can_demote?(promoter_role, target_role) do
+      # Logique pour rétrograder l'utilisateur
+      {:ok, demote(target)}
+    else
+      {:error, "You do not have permission to demote this user"}
+    end
+  end
+
+  # Exemple de fonctions pour modifier le rôle (simplifié)
+  defp promote(user) do
+    # Logique de promotion (ex : augmenter le rôle dans la hiérarchie)
+  end
+
+  defp demote(user) do
+    # Logique de rétrogradation (ex : diminuer le rôle dans la hiérarchie)
+  end
+
+  def update_user_roles(user, new_roles) do
+    # Vérifiez que new_roles est un map
+    if is_map(new_roles) do
+      # Retirer le mot de passe si c'est présent
+      updated_user = Map.drop(user, [:password])
+      # Mettez à jour les rôles (par exemple, en ajoutant les nouveaux rôles)
+      new_roles_map = Map.merge(updated_user, new_roles)
+      # Effectuez la mise à jour dans la base de données
+      Repo.update!(new_roles_map)
+    else
+      {:error, "Invalid roles format"}
+    end
+  end
+
+  def admin_exists? do
+    Repo.exists?(from u in User, where: u.role == "Admin")
   end
 end

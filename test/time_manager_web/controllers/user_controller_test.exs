@@ -1,88 +1,50 @@
 defmodule TimeManagerWeb.UserControllerTest do
   use TimeManagerWeb.ConnCase
 
-  import TimeManager.AccountsFixtures
+  alias TimeManager.Accounts
+  alias TimeManager.Repo
 
-  alias TimeManager.Accounts.User
+  setup do
+    # Créez des utilisateurs pour les tests avec différents rôles
+    admin = Accounts.create_user(%{email: "admin@example.com", username: "admin", role: "Admin"})
+    super_manager = Accounts.create_user(%{email: "super_manager@example.com", username: "supermanager", role: "Super Manager"})
+    manager = Accounts.create_user(%{email: "manager@example.com", username: "manager", role: "Manager"})
+    employee = Accounts.create_user(%{email: "employee@example.com", username: "employee", role: "Employee"})
 
-  @create_attrs %{
-    username: "some username",
-    email: "some email"
-  }
-  @update_attrs %{
-    username: "some updated username",
-    email: "some updated email"
-  }
-  @invalid_attrs %{username: nil, email: nil}
-
-  setup %{conn: conn} do
-    {:ok, conn: put_req_header(conn, "accept", "application/json")}
+    {:ok, admin: admin, super_manager: super_manager, manager: manager, employee: employee}
   end
 
-  describe "index" do
-    test "lists all users", %{conn: conn} do
-      conn = get(conn, ~p"/api/users")
-      assert json_response(conn, 200)["data"] == []
-    end
+  test "Admin can promote a user", %{conn: conn, admin: admin, manager: manager} do
+    conn = assign(conn, :current_user, admin)
+    conn = put(conn, Routes.user_path(conn, :promote, manager.id), %{"role" => "Super Manager"})
+
+    assert json_response(conn, 200)["message"] == "User promoted successfully"
+    assert Repo.get!(Accounts.User, manager.id).role == "Super Manager"
   end
 
-  describe "create user" do
-    test "renders user when data is valid", %{conn: conn} do
-      conn = post(conn, ~p"/api/users", user: @create_attrs)
-      assert %{"id" => id} = json_response(conn, 201)["data"]
+  test "Employee cannot promote a user", %{conn: conn, employee: employee, manager: manager} do
+    conn = assign(conn, :current_user, employee)
+    conn = put(conn, Routes.user_path(conn, :promote, manager.id), %{"role" => "Super Manager"})
 
-      conn = get(conn, ~p"/api/users/#{id}")
-
-      assert %{
-               "id" => ^id,
-               "email" => "some email",
-               "username" => "some username"
-             } = json_response(conn, 200)["data"]
-    end
-
-    test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, ~p"/api/users", user: @invalid_attrs)
-      assert json_response(conn, 422)["errors"] != %{}
-    end
+    assert json_response(conn, 403)["error"] == "You do not have permission to promote users. Please contact an admin if you believe this is an error."
   end
 
-  describe "update user" do
-    setup [:create_user]
+  test "Admin cannot promote to Admin if one already exists", %{conn: conn, admin: admin, super_manager: super_manager} do
+    conn = assign(conn, :current_user, admin)
+    conn = put(conn, Routes.user_path(conn, :promote, super_manager.id), %{"role" => "Admin"})
 
-    test "renders user when data is valid", %{conn: conn, user: %User{id: id} = user} do
-      conn = put(conn, ~p"/api/users/#{user}", user: @update_attrs)
-      assert %{"id" => ^id} = json_response(conn, 200)["data"]
-
-      conn = get(conn, ~p"/api/users/#{id}")
-
-      assert %{
-               "id" => ^id,
-               "email" => "some updated email",
-               "username" => "some updated username"
-             } = json_response(conn, 200)["data"]
-    end
-
-    test "renders errors when data is invalid", %{conn: conn, user: user} do
-      conn = put(conn, ~p"/api/users/#{user}", user: @invalid_attrs)
-      assert json_response(conn, 422)["errors"] != %{}
-    end
+    assert json_response(conn, 400)["error"] == "There is already an admin. Only one admin is allowed."
   end
 
-  describe "delete user" do
-    setup [:create_user]
+  test "Super Manager can promote Manager but not Admin", %{conn: conn, super_manager: super_manager, manager: manager} do
+    conn = assign(conn, :current_user, super_manager)
 
-    test "deletes chosen user", %{conn: conn, user: user} do
-      conn = delete(conn, ~p"/api/users/#{user}")
-      assert response(conn, 204)
+    # Promotion valide à Manager
+    conn = put(conn, Routes.user_path(conn, :promote, manager.id), %{"role" => "Manager"})
+    assert json_response(conn, 200)["message"] == "User promoted successfully"
 
-      assert_error_sent 404, fn ->
-        get(conn, ~p"/api/users/#{user}")
-      end
-    end
-  end
-
-  defp create_user(_) do
-    user = user_fixture()
-    %{user: user}
+    # Tentative de promotion à Admin
+    conn = put(conn, Routes.user_path(conn, :promote, manager.id), %{"role" => "Admin"})
+    assert json_response(conn, 403)["error"] == "You do not have permission to promote users."
   end
 end

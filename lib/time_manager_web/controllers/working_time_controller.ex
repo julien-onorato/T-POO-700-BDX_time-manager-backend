@@ -4,7 +4,6 @@ defmodule TimeManagerWeb.WorkingTimeController do
   alias TimeManager.WorkingTimes
   alias TimeManager.Accounts
   alias TimeManager.Accounts.WorkingTime
-  alias TimeManager.WorkingTimes.WorkingTime
   alias TimeManager.Repo
 
   # Fonction pour récupérer les heures de travail de tous les utilisateurs

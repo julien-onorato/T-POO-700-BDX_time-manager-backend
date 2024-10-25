@@ -71,6 +71,6 @@ defmodule TimeManager.Auth do
   end
 
   defp get_binary_secret(secret) do
-    binary_secret = :binary.copy(secret)
+    _binary_secret = :binary.copy(secret)
   end
 end
