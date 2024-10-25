@@ -11,6 +11,11 @@ config :time_manager,
   ecto_repos: [TimeManager.Repo],
   generators: [timestamp_type: :utc_datetime]
 
+config :cors_plug,
+  origin: ["http://localhost:5173"],
+  max_age: 86400,
+  methods: ["GET", "POST","PUT","DELETE","OPTIONS"]
+
 # Configures the endpoint
 config :time_manager, TimeManagerWeb.Endpoint,
   #url: [host: "134.209.208.89"], # A décommenter lors du déploiement

@@ -7,17 +7,9 @@ defmodule TimeManagerWeb.AuthController do
   def register(conn, %{"email" => email, "password" => password, "username" => username}) do
     case Accounts.create_user(%{email: email, password: password, username: username}) do
       {:ok, user} ->
-        case TimeManager.Auth.generate_jwt(user) do
-          {:ok, jwt} ->
-            conn
-            |> put_status(:created)
-            |> json(%{token: jwt, user_id: user.id})
-
-          {:error, reason} ->
-            conn
-            |> put_status(:internal_server_error)
-            |> json(%{error: reason})
-        end
+        conn
+        |> put_status(:created)
+        |> json(%{user_id: user.id})
 
       {:error, changeset} ->
         conn
@@ -25,6 +17,7 @@ defmodule TimeManagerWeb.AuthController do
         |> json(%{error: changeset.errors})
     end
   end
+
 
   def login(conn, %{"email" => email, "password" => password}) do
     case Accounts.get_user_by_email(email) do
